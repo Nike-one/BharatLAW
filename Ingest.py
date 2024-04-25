@@ -1,6 +1,6 @@
 import ray
 import logging
-from langchain_community.document_loaders import PyPDFLoader, DirectoryLoader
+from langchain_community.document_loaders import DirectoryLoader
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 # Load documents with logging
 logging.info("Loading documents...")
-loader = DirectoryLoader('data', glob="./*.pdf", loader_cls=PyPDFLoader)
+loader = DirectoryLoader('data', glob="./*.txt")
 documents = loader.load()
 
 # Extract text from documents and split into manageable texts with logging
@@ -31,7 +31,7 @@ for document in documents:
 
 # Define embedding function
 def embedding_function(text):
-    embeddings_model = HuggingFaceEmbeddings(model_name="nomic-ai/nomic-embed-text-v1", model_kwargs={"trust_remote_code": True, "revision": "289f532e14dbbbd5a04753fa58739e9ba766f3c7"})
+    embeddings_model = HuggingFaceEmbeddings(model_name="law-ai/InLegalBERT")
     return embeddings_model.embed_query(text)
 
 # Create FAISS index for embeddings
