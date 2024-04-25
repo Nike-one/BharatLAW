@@ -1,186 +1,127 @@
+import time
+import os
+import streamlit as st
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.prompts import PromptTemplate
-from langchain_together import Together
-import os
 from langchain.memory import ConversationBufferWindowMemory
 from langchain.chains import ConversationalRetrievalChain
-import streamlit as st
-import time
+from langchain_together import Together
 
+from footer import footer
 
-st.set_page_config(page_title="LawGPT")
+# Set the Streamlit page configuration and theme
+st.set_page_config(page_title="BharatLAW", layout="centered")
 
-col1, col2, col3 = st.columns([1,6,1])
+# Display the logo image
+col1, col2, col3 = st.columns([1, 30, 1])
 with col2:
-    st.image("https://github.com/harshitv804/LawGPT/assets/100853494/ecff5d3c-f105-4ba2-a93a-500282f0bf00", width=700)
+    st.image("D:/BharatLAW/images/banner.png", use_column_width=True)
 
-st.markdown(
-    """
-    <style>
-    /* Button Styles */
-    div.stButton > button {
-        border: 2px solid #4CAF50; /* Green border */
-        background-color: #4CAF50; /* Green background */
-        color: white; /* White text */
-        padding: 10px 24px; /* Some padding */
-        cursor: pointer; /* Pointer/hand icon */
-        border-radius: 8px; /* Rounded corners */
-        font-size: 16px; /* Large font size */
-    }
+def hide_hamburger_menu():
+    st.markdown("""
+        <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+        </style>
+        """, unsafe_allow_html=True)
 
-    div.stButton > button:hover {
-        background-color: #45a049; /* Darker green background on hover */
-    }
+hide_hamburger_menu()
 
-    div.stButton > button:active {
-        background-color: #3e8e41; /* Even darker green background when clicked */
-    }
-
-    /* Input Field Styles */
-    .stTextInput>div>div>input {
-        border-radius: 20px !important;
-        border: 1px solid #4CAF50 !important;
-    }
-
-    /* General App Styles */
-    .reportview-container .main .block-container{
-        padding-top: 2rem;
-        padding-right: 1rem;
-        padding-left: 1rem;
-        padding-bottom: 2rem;
-    }
-
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    .css-1d391kg {padding-top: 0rem;} /* Adjust Streamlit's default padding at the top */
-
-    /* Hide Streamlit's Fullscreen Button */
-    button[title="View fullscreen"] {
-        visibility: hidden;
-    }
-    </style>
-""",
-    unsafe_allow_html=True,
-)
-
-# Your Streamlit app's content goes here
-
-def reset_conversation():
-  st.session_state.messages = []
-  st.session_state.memory.clear()
-
+# Initialize session state for messages and memory
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
 if "memory" not in st.session_state:
-    st.session_state.memory = ConversationBufferWindowMemory(k=2, memory_key="chat_history",return_messages=True)
+    st.session_state.memory = ConversationBufferWindowMemory(k=2, memory_key="chat_history", return_messages=True)
 
-embeddings = HuggingFaceEmbeddings(model_name="nomic-ai/nomic-embed-text-v1",model_kwargs={"trust_remote_code":True,"revision":"289f532e14dbbbd5a04753fa58739e9ba766f3c7"})
+@st.cache_resource
+def load_embeddings():
+    """Load and cache the embeddings model."""
+    return HuggingFaceEmbeddings(model_name="nlpaueb/legal-bert-base-uncased")
+
+embeddings = load_embeddings()
 db = FAISS.load_local("ipc_embed_db", embeddings, allow_dangerous_deserialization=True)
-db_retriever = db.as_retriever(search_type="similarity",search_kwargs={"k": 4})
+db_retriever = db.as_retriever(search_type="similarity", search_kwargs={"k": 3})
 
 prompt_template = """
 <s>[INST]
-As a legal chatbot with expertise in the Indian Penal Code, your primary objective is to deliver precise, accurate, and succinct responses to user inquiries. Please adhere to these guidelines:
-- Respond in a bullet-point format to ensure clarity and brevity.
-- Directly and accurately address the user's question with relevant information.
-- Avoid providing additional information beyond what is necessary to answer the question.
-- Do not generate content unrelated to the user's current question.
-- Utilize available information to respond to queries outside our direct knowledge base, focusing solely on the user's current question without referring back to chat history.
-- Ensure that your responses are strictly relevant to the context provided and the specific question asked.
+As a legal chatbot specializing in the Indian Penal Code, you are tasked with providing highly accurate and contextually appropriate responses. Ensure your answers meet these criteria:
+- Respond in a bullet-point format to clearly delineate distinct aspects of the legal query.
+- Each point should accurately reflect the breadth of the legal provision in question, avoiding over-specificity unless directly relevant to the user's query.
+- Clarify the general applicability of the legal rules or sections mentioned, highlighting any common misconceptions or frequently misunderstood aspects.
+- Limit responses to essential information that directly addresses the user's question, providing concise yet comprehensive explanations.
+- Avoid assuming specific contexts or details not provided in the query, focusing on delivering universally applicable legal interpretations unless otherwise specified.
+- Conclude with a brief summary that captures the essence of the legal discussion and corrects any common misinterpretations related to the topic.
 
 CONTEXT: {context}
 CHAT HISTORY: {chat_history}
 QUESTION: {question}
 ANSWER:
-- [Provide answers in bullet points]
-
+- Point 1: [Detail the first key aspect of the law, ensuring it reflects general application]
+- Point 2: [Provide a concise explanation of how the law is typically interpreted or applied]
+- Point 3: [Correct a common misconception or clarify a frequently misunderstood aspect]
+- Point 4: [Detail any exceptions to the general rule, if applicable]
+- Point 5: [Include any additional relevant information that directly relates to the user's query]
 </s>[INST]
 """
+
+
 
 prompt = PromptTemplate(template=prompt_template,
                         input_variables=['context', 'question', 'chat_history'])
 
-# You can also use other LLMs options from https://python.langchain.com/docs/integrations/llms. Here I have used TogetherAI API
-api= os.environ['TOGETHER_API_KEY']
-llm = Together(
-    model="togethercomputer/StripedHyena-Nous-7B",
-    temperature=0.5,
-    max_tokens=1024,
-    together_api_key=api
-)
+api_key = os.getenv('TOGETHER_API_KEY')
+llm = Together(model="mistralai/Mixtral-8x22B-Instruct-v0.1", temperature=0.5, max_tokens=1024, together_api_key=api_key)
 
-qa = ConversationalRetrievalChain.from_llm(
-    llm=llm,
-    memory=st.session_state.memory,
-    retriever=db_retriever,
-    combine_docs_chain_kwargs={'prompt': prompt}
-)
+qa = ConversationalRetrievalChain.from_llm(llm=llm, memory=st.session_state.memory, retriever=db_retriever, combine_docs_chain_kwargs={'prompt': prompt})
+
+def extract_answer(full_response):
+    """Extracts the answer from the LLM's full response by removing the instructional text."""
+    answer_start = full_response.find("Response:")
+    if answer_start != -1:
+        answer_start += len("Response:")
+        answer_end = len(full_response)
+        return full_response[answer_start:answer_end].strip()
+    return full_response
+
+def reset_conversation():
+    st.session_state.messages = []
+    st.session_state.memory.clear()
 
 for message in st.session_state.messages:
-    with st.chat_message(message.get("role")):
-        st.write(message.get("content"))
+    with st.chat_message(message["role"]):
+        st.write(message["content"])
 
-input_prompt = st.chat_input("Say something")
 
+input_prompt = st.chat_input("Say something...")
 if input_prompt:
-    # Display user's message
     with st.chat_message("user"):
         st.markdown(f"**You:** {input_prompt}")
 
-    # Append user's message to the session state
     st.session_state.messages.append({"role": "user", "content": input_prompt})
-
-    # Simulate the assistant thinking before responding
     with st.chat_message("assistant"):
         with st.spinner("Thinking 💡..."):
             result = qa.invoke(input=input_prompt)
             message_placeholder = st.empty()
+            answer = extract_answer(result["answer"])
 
             # Initialize the response message
             full_response = "⚠️ **_Note: Information provided may be inaccurate._** \n\n\n"
-            for chunk in result["answer"]:
+            for chunk in answer:
                 # Simulate typing by appending chunks of the response over time
                 full_response += chunk
                 time.sleep(0.02)  # Adjust the sleep time to control the "typing" speed
-                message_placeholder.markdown(full_response + " ▌", unsafe_allow_html=True)
+                message_placeholder.markdown(full_response + " |", unsafe_allow_html=True)
 
-    # Append assistant's message to the session state
-    st.session_state.messages.append({"role": "assistant", "content": result["answer"]})
+        st.session_state.messages.append({"role": "assistant", "content": answer})
 
-    # Display a visually appealing reset button
-    if st.button('🗑️ Reset All Chat', on_click=reset_conversation):
-        st.experimental_rerun()
+        if st.button('🗑️ Reset All Chat', on_click=reset_conversation):
+            st.experimental_rerun()
 
-# Apply custom styling to enhance the chat UI
-st.markdown(
-    """
-    <style>
-    /* Chat message styling */
-    .stChatMessage {
-        border-radius: 20px;
-        padding: 10px;
-    }
-    /* Custom styling for user messages */
-    .stChatMessage[data-testid="stChatMessage-user"] {
-        background-color: #e1f5fe;
-    }
-    /* Custom styling for assistant messages */
-    .stChatMessage[data-testid="stChatMessage-assistant"] {
-        background-color: #ede7f6;
-    }
-    /* Style the reset button */
-    div.stButton > button {
-        border: none;
-        border-radius: 20px;
-        padding: 8px 24px;
-        font-size: 16px;
-        color: white;
-        background-color: #6c757d;
-        cursor: pointer;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+
+
+# Define the CSS to style the footer
+footer()
+
+
