@@ -10,3 +10,4 @@ einops
 langchain-together
 ray==2.10.0
 unstructured
+htbuilder
