@@ -16,7 +16,7 @@ st.set_page_config(page_title="BharatLAW", layout="centered")
 # Display the logo image
 col1, col2, col3 = st.columns([1, 30, 1])
 with col2:
-    st.image("https://github.com/Nike-one/BharatLAW/blob/master/images/banner.png", use_column_width=True)
+    st.image("https://github.com/Nike-one/BharatLAW/blob/master/images/banner.png?raw=true", use_column_width=True)
 
 def hide_hamburger_menu():
     st.markdown("""
@@ -38,7 +38,7 @@ if "memory" not in st.session_state:
 @st.cache_resource
 def load_embeddings():
     """Load and cache the embeddings model."""
-    return HuggingFaceEmbeddings(model_name="nlpaueb/legal-bert-base-uncased")
+    return HuggingFaceEmbeddings(model_name="law-ai/InLegalBERT")
 
 embeddings = load_embeddings()
 db = FAISS.load_local("ipc_embed_db", embeddings, allow_dangerous_deserialization=True)
