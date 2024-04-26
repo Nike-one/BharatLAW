@@ -7,6 +7,9 @@ BharatLAW is a sophisticated legal advisory chatbot focused on providing detaile
 - **Document Ingestion**: Automated processing of text documents to store legal information in a FAISS vector database.
 - **Real-Time Interaction**: Real-time legal advice through a conversational interface built with Streamlit.
 - **Legal Prompt Templating**: Structured prompt format ensuring clarity, detail, and legal accuracy in responses.
+<br>
+🚀 Blast off to discovery! Our model is waiting for you <a href= "https://huggingface.co/spaces/nik-one/BharatLAW-IPC_legal_guidance">here</a>. Explore it today and elevate your understanding! 🌟
+<br>
 
 ## Components 🛠️
 
@@ -80,4 +83,4 @@ This key is crucial for the chatbot to access language model functionalities pro
 
 ## Usage 🔍
 
-Navigate to the local URL provided by Streamlit to interact with the BharatLAW chatbot. Enter your legal queries and receive precise information derived from the indexed legal documents. Utilize the chat interface to engage in a legal discussion and get accurate advice.
+Navigate to the local URL provided by Streamlit to interact with the BharatLAW chatbot. Enter your legal queries and receive precise information derived from the indexed legal documents. Utilize the chat interface to engage in a legal discussion and get accurate advice.<br>
