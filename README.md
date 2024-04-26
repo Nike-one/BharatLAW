@@ -8,7 +8,9 @@ BharatLAW is a sophisticated legal advisory chatbot focused on providing detaile
 - **Real-Time Interaction**: Real-time legal advice through a conversational interface built with Streamlit.
 - **Legal Prompt Templating**: Structured prompt format ensuring clarity, detail, and legal accuracy in responses.
 <br>
-🚀 **Blast off to discovery! Our model is waiting for you <a href= "https://huggingface.co/spaces/nik-one/BharatLAW-IPC_legal_guidance">here</a>. Explore it today and elevate your understanding!** 🌟
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<strong>🚀Blast off to discovery! Our project is waiting for you <a href= "https://huggingface.co/spaces/nik-one/BharatLAW-IPC_legal_guidance">here</a>. Explore it today and elevate your understanding!🌟</strong>
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 <br>
 
 ## Components 🛠️
