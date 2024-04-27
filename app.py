@@ -58,11 +58,11 @@ CONTEXT: {context}
 CHAT HISTORY: {chat_history}
 QUESTION: {question}
 ANSWER:
-- Point 1: [Detail the first key aspect of the law, ensuring it reflects general application]
-- Point 2: [Provide a concise explanation of how the law is typically interpreted or applied]
-- Point 3: [Correct a common misconception or clarify a frequently misunderstood aspect]
-- Point 4: [Detail any exceptions to the general rule, if applicable]
-- Point 5: [Include any additional relevant information that directly relates to the user's query]
+- [Detail the first key aspect of the law, ensuring it reflects general application]
+- [Provide a concise explanation of how the law is typically interpreted or applied]
+- [Correct a common misconception or clarify a frequently misunderstood aspect]
+- [Detail any exceptions to the general rule, if applicable]
+- [Include any additional relevant information that directly relates to the user's query]
 </s>[INST]
 """
 
@@ -107,7 +107,7 @@ if input_prompt:
             answer = extract_answer(result["answer"])
 
             # Initialize the response message
-            full_response = "⚠️ **_Note: Information provided may be inaccurate._** \n\n\n"
+            full_response = "⚠️ **_Gentle reminder: We generally ensure precise information, but do double-check._** \n\n\n"
             for chunk in answer:
                 # Simulate typing by appending chunks of the response over time
                 full_response += chunk
