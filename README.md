@@ -2,14 +2,21 @@
 
 BharatLAW is a sophisticated legal advisory chatbot focused on providing detailed and contextually accurate responses about the Indian Penal Code. It utilizes a powerful combination of machine learning technologies to efficiently process and retrieve legal information.
 
+---
+
 ## Features 🌟
 
 - **Document Ingestion**: Automated processing of text documents to store legal information in a FAISS vector database.
 - **Real-Time Interaction**: Real-time legal advice through a conversational interface built with Streamlit.
 - **Legal Prompt Templating**: Structured prompt format ensuring clarity, detail, and legal accuracy in responses.
 <br>
+
+---
+
 <h4><strong>🚀Blast off to discovery! Our project is waiting for you <a href= "https://huggingface.co/spaces/nik-one/BharatLAW-IPC_legal_guidance">BharatLAW</a>. Explore it today and elevate your understanding!🌟</strong><h4>
 <br>
+   
+---
 
 ## Components 🛠️
 
@@ -28,7 +35,9 @@ BharatLAW is a sophisticated legal advisory chatbot focused on providing detaile
 |-----------------------|-------------|
 | **Streamlit Interface** | Provides a web interface for user interaction. |
 | **Chat Functionality**  | Manages conversational flow and stores chat history. |
-| **Legal Information Retrieval** | Leverages FAISS index to fetch pertinent legal information based on queries. |
+| **Legal Information Retrieval** | Leverages FAISS index to fetch pertinent legal information based on queries. 
+
+---
 
 ## Setup 📦
 
@@ -79,7 +88,7 @@ This key is crucial for the chatbot to access language model functionalities pro
    ```bash
    streamlit run app.py
    ```
-
+---
 
 ## Usage 🔍
 
